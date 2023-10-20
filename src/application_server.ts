@@ -1,6 +1,7 @@
 import express from "express";
 import { ApplicationRouter } from "./controllers/application_route";
 import { ExceptionMiddleware } from "./controllers/middlewares/exception_middleware";
+import httpLog from "./controllers/middlewares/http_log";
 
 export class ApplicationServer {
   private _server: express.Application;
@@ -12,8 +13,9 @@ export class ApplicationServer {
     this._routes = new ApplicationRouter();
   }
 
-  public get server(): express.Application {
-    this._server.use(express.json())
+  public get server() {
+    this._server.use(express.json());
+    this._server.use(httpLog);
 
     this._routes.handle(this._server);
 

@@ -2,12 +2,20 @@ import { Request, Response, NextFunction } from "express";
 import { ApiError } from "../../common/exceptions/api_error"
 
 export class ExceptionMiddleware{
+  private internalServerErrorStatusCode: number;
+  private internalServerErrorMessage: string;
+
+  constructor(){
+    this.internalServerErrorStatusCode = 500;
+    this.internalServerErrorMessage =  'Internal server error';
+  }
+
   handle = ( error: ApiError , req: Request, res: Response, next: NextFunction ) => {
-    const statusCode = error.statusCode ?? 500;
-    const message = error.statusCode ? error.message : 'Internal server error';
+    const statusCode = error.statusCode ?? this.internalServerErrorStatusCode;
+    const message = error.statusCode ? error.message :this.internalServerErrorMessage;
 
 
-    return res.status(statusCode).json(
+    res.status(statusCode).json(
       {
         status: statusCode,
         message: message
@@ -15,5 +23,3 @@ export class ExceptionMiddleware{
     );
   }
 }
-
-module.exports = { ErrorMiddleware: ExceptionMiddleware };
